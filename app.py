@@ -11,6 +11,7 @@ debug = DebugToolbarExtension(app)
 
 responses = []
 QUESTIONS = survey.questions
+curr_number = 0
 
 @app.get("/")
 def start_survey():
@@ -24,7 +25,8 @@ def start_survey():
 @app.post("/begin")
 def go_to_question():
 
-    return redirect("/questions/0")
+
+    return redirect(f"/questions/{curr_number}")
 
 
 @app.get("/questions/<int:number>")
@@ -36,3 +38,17 @@ def get_question(number):
 
     return render_template("question.html", question_prompt=curr_question,
         question_choice=curr_choice)
+
+
+@app.post("/answer")
+def retrieve_answer():
+    answer = request.form["answer"]
+
+    responses.append(answer)
+    breakpoint()
+    curr_number = curr_number + 1
+
+    return redirect(f"/questions/{curr_number}")
+
+
+
