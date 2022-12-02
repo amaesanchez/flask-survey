@@ -28,6 +28,8 @@ def go_to_question():
 @app.get("/questions/<int:number>")
 def get_question(number):
     """ renders current question with current number """
+    # <int:number> doesnt work on -1 hence the error
+    # but can convert to int in the view ftn instead
 
     if number != len(session['responses']):
         # session.pop("_flashes", None) # doubles
