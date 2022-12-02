@@ -8,10 +8,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
-
-responses = []
 QUESTIONS = survey.questions
-curr_number = 0
 
 @app.get("/")
 def start_survey():
@@ -19,22 +16,28 @@ def start_survey():
     title = survey.title
     instructions = survey.instructions
 
+    session['responses'] = []
+    session['curr_number'] = 0
+
     return render_template("survey_start.html", title=title,
         instructions=instructions)
 
+
 @app.post("/begin")
 def go_to_question():
+    """ redirects to question at current question index """
 
-
-    return redirect(f"/questions/{curr_number}")
+    return redirect(f"/questions/{session['curr_number']}")
 
 
 @app.get("/questions/<int:number>")
 def get_question(number):
-    survey = QUESTIONS[number]
-    curr_question = survey.prompt
-    curr_choice = survey.choices
+    """ renders current question with current number """
 
+
+    question = QUESTIONS[number]
+    curr_question = question.prompt
+    curr_choice = question.choices
 
     return render_template("question.html", question_prompt=curr_question,
         question_choice=curr_choice)
@@ -42,13 +45,21 @@ def get_question(number):
 
 @app.post("/answer")
 def retrieve_answer():
+    """ redirects to next question if within QUESTION range
+    and appends user response to responses key in session.
+    Renders Thank You template when finished with survey"""
+
     answer = request.form["answer"]
 
+    responses = session['responses']
     responses.append(answer)
-    breakpoint()
-    curr_number = curr_number + 1
+    session['responses'] = responses
 
-    return redirect(f"/questions/{curr_number}")
+    if session["curr_number"] < (len(QUESTIONS) - 1):
+        curr_number = session["curr_number"]
+        curr_number += 1
+        session["curr_number"] = curr_number
 
-
-
+        return redirect(f"/questions/{session['curr_number']}")
+    else:
+        return render_template("completion.html")
