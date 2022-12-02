@@ -13,21 +13,17 @@ QUESTIONS = survey.questions
 @app.get("/")
 def start_survey():
     """ renders start of survey """
-    title = survey.title
-    instructions = survey.instructions
 
-    session['responses'] = []
-    session['curr_number'] = 0
     #injecct survey
-    return render_template("survey_start.html", title=title,
-        instructions=instructions)
+    return render_template("survey_start.html", survey=survey)
 
 
 @app.post("/begin")
 def go_to_question():
     """ redirects to question at current question index """
-    #clear responses
-    return redirect(f"/questions/{session['curr_number']}")
+
+    session['responses'] = []
+    return redirect(f"/questions/{len(session['responses'])}")
 
 
 @app.get("/questions/<int:number>")
@@ -35,11 +31,7 @@ def get_question(number):
     """ renders current question with current number """
 
     question = QUESTIONS[number]
-    curr_question = question.prompt
-    curr_choice = question.choices
-
-    return render_template("question.html", question_prompt=curr_question,
-        question_choice=curr_choice)
+    return render_template("question.html", question=question)
 
 # add logic for moving ahead
 @app.post("/answer")
@@ -54,11 +46,9 @@ def retrieve_answer():
     responses.append(answer)
     session['responses'] = responses
 
-    if session["curr_number"] < (len(QUESTIONS) - 1):
-        curr_number = session["curr_number"]
-        curr_number += 1
-        session["curr_number"] = curr_number
+    if len(session['responses']) < (len(QUESTIONS)):
 
-        return redirect(f"/questions/{session['curr_number']}")
+        return redirect(f"/questions/{len(session['responses'])}")
     else:
+        print(session['responses'])
         return render_template("completion.html")
