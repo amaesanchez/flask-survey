@@ -29,7 +29,6 @@ def go_to_question():
 def get_question(number):
     """ renders current question with current number """
 
-
     if number != len(session['responses']):
         # session.pop("_flashes", None) # doubles
         flash("Quit cheating. Get back in line")
@@ -52,7 +51,7 @@ def retrieve_answer():
     responses.append(answer)
     session['responses'] = responses
 
-    if len(session['responses']) < (len(QUESTIONS)): # add guard here for negative
+    if len(session['responses']) < (len(QUESTIONS)):
         return redirect(f"/questions/{len(session['responses'])}")
     else:
         print(session['responses'])
