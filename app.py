@@ -14,7 +14,6 @@ QUESTIONS = survey.questions
 def start_survey():
     """ renders start of survey """
 
-    #injecct survey
     return render_template("survey_start.html", survey=survey)
 
 
@@ -30,10 +29,17 @@ def go_to_question():
 def get_question(number):
     """ renders current question with current number """
 
-    question = QUESTIONS[number]
-    return render_template("question.html", question=question)
 
-# add logic for moving ahead
+    if number > len(session['responses']):
+        session.pop("_flashes", None)
+        flash("Quit cheating. Get back in line")
+        return redirect(f"/questions/{len(session['responses'])}")
+
+    else:
+        question = QUESTIONS[number]
+        return render_template("question.html", question=question)
+
+
 @app.post("/answer")
 def retrieve_answer():
     """ redirects to next question if within QUESTION range
@@ -47,7 +53,6 @@ def retrieve_answer():
     session['responses'] = responses
 
     if len(session['responses']) < (len(QUESTIONS)):
-
         return redirect(f"/questions/{len(session['responses'])}")
     else:
         print(session['responses'])
