@@ -18,7 +18,7 @@ def start_survey():
 
     session['responses'] = []
     session['curr_number'] = 0
-
+    #injecct survey
     return render_template("survey_start.html", title=title,
         instructions=instructions)
 
@@ -26,14 +26,13 @@ def start_survey():
 @app.post("/begin")
 def go_to_question():
     """ redirects to question at current question index """
-
+    #clear responses
     return redirect(f"/questions/{session['curr_number']}")
 
 
 @app.get("/questions/<int:number>")
 def get_question(number):
     """ renders current question with current number """
-
 
     question = QUESTIONS[number]
     curr_question = question.prompt
@@ -42,7 +41,7 @@ def get_question(number):
     return render_template("question.html", question_prompt=curr_question,
         question_choice=curr_choice)
 
-
+# add logic for moving ahead
 @app.post("/answer")
 def retrieve_answer():
     """ redirects to next question if within QUESTION range
