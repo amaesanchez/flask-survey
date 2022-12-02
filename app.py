@@ -25,17 +25,17 @@ def go_to_question():
     return redirect(f"/questions/{len(session['responses'])}")
 
 
-@app.get("/questions/<int:number>")
+@app.get("/questions/<number>")
 def get_question(number):
     """ renders current question with current number """
 
-    if number != len(session['responses']):
-        # session.pop("_flashes", None) # doubles
+    if int(number) != len(session['responses']):
+        session.pop("_flashes", None)
         flash("Quit cheating. Get back in line")
         return redirect(f"/questions/{len(session['responses'])}")
 
     else:
-        question = QUESTIONS[number]
+        question = QUESTIONS[int(number)]
         return render_template("question.html", question=question)
 
 
